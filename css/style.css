@@ -1,0 +1,50 @@
+#reserve_post_board p.rpb_publishing_soon::before {
+	content: "\f469";
+	color: #82878c;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	position: relative;
+	text-decoration: none !important;
+	vertical-align: top;
+}
+
+#reserve_post_board p.rpb_publishing_soon span {
+	padding-left: 2em;
+}
+
+
+#reserve_post_board #rpb_future_posts ul {
+	display: table;
+	width: 100%;
+	margin: 0;
+	padding: 0.25em 0 0 0;
+}
+
+#reserve_post_board #rpb_future_posts ul li {
+	display: table-row;
+	margin: 0;
+}
+
+#reserve_post_board #rpb_future_posts ul li span {
+	display: table-cell;
+	padding: 0.25em 1em 0.25em 0;
+	width: auto;
+}
+
+#reserve_post_board #rpb_future_posts ul li span:last-child {
+	padding-right: 0;
+}
+
+#reserve_post_board #rpb_future_posts ul li .rpb_date,
+#reserve_post_board #rpb_future_posts ul li .rpb_post_type {
+	word-break: none;
+}
+
+#reserve_post_board #rpb_future_posts ul li .rpb_title {
+	width: 40%;
+}
+
+#reserve_post_board #rpb_future_posts ul li .rpb_date.color_today {
+	color: red;
+}
