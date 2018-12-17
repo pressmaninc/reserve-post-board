@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Reserve Post Board
-Description: Reserve Post in Dash Bord
+Description: Reserve Post in Dash Board
 Version: 1.0
-Author: Pressman
+Author: PRESSMAN
 Author URI: https://www.pressman.ne.jp/
 copyright: Copyright (c) 2018, PRESSMAN
 license: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License, v2 or higher
@@ -148,8 +148,7 @@ class Reserve_Post_Board {
 							<li>
 								<span class="rpb_date<?php echo $today; ?>"><?php echo $date_txt; ?></span>
 								<span class="rpb_title"><?php echo $link; ?></span>
-								<span class="rpb_post_type">(<?php echo get_post_type_object( $post_type )->label; ?>
-									)</span>
+								<span class="rpb_post_type">(<?php echo get_post_type_object( $post_type )->label; ?>)</span>
 							</li>
 							<?php
 
