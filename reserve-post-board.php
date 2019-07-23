@@ -20,7 +20,7 @@ class Reserve_Post_Board {
 	/**
 	 * Initialization
 	 **/
-	function __construct() {
+	public function __construct() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'add_stylesheet' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'widgets' ) );
 		add_action( 'admin_init', array( $this, 'text_domain' ) );
@@ -30,7 +30,7 @@ class Reserve_Post_Board {
 	 * Languages registry
 	 **/
 	public function text_domain() {
-		load_plugin_textdomain( 'reserve-post-board', false, plugin_basename( plugin_dir_path( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'reserve-post-board', false, basename( __DIR__ ) . '/languages' );
 	}
 
 	/**
@@ -58,112 +58,64 @@ class Reserve_Post_Board {
 	 * Process of view
 	 **/
 	public function reserve_post_board() {
-
 		$limit     = apply_filters( 'rbp_list_limit', 10 );
 		$hour      = apply_filters( 'rbp_publishing_soon_period', 24 );
 		$post_type = apply_filters( 'rbp_target_post_type', array( 'any' ) );
-
-		$query      = array(
-			'post_type'   => $post_type,
-			'post_status' => array( 'future' )
-		);
-		$all_result = new WP_Query( $query );
-		$all_cnt    = $all_result->post_count;
-		wp_reset_postdata();
-
-		$query       = array(
-			'post_type'      => $post_type,
-			'post_status'    => array( 'future' ),
-			'orderby'        => 'post_date',
-			'order'          => 'ASC',
-			'posts_per_page' => $limit
-		);
-		$list_result = new WP_Query( $query );
-		$list_cnt    = $list_result->post_count;
-
-		$before = date_i18n( 'Y-m-d H:i:s', strtotime( date_i18n( 'Y-m-d 23:59:59' ) . '+24 hour' ) );
-		$after  = date_i18n( 'Y-m-d 00:00:00' );
 
 		$query = array(
 			'post_type'      => $post_type,
 			'post_status'    => array( 'future' ),
 			'orderby'        => 'post_date',
 			'order'          => 'ASC',
-			'posts_per_page' => $limit,
-			'date_query'     => array(
-				array(
-					'compare'   => 'BETWEEN',
-					'inclusive' => true,
-					'before'    => $before,
-					'after'     => $after
-				)
+			'posts_per_page' => - 1
+		);
+
+		$all_feature_posts = new WP_Query( $query );
+		$display_limit     = min( $all_feature_posts->post_count, $limit );
+		wp_reset_postdata();
+
+		$query['date_query'] = array(
+			array(
+				'compare'   => '<=',
+				'inclusive' => true,
+				'before'    => "+{$hour} hours",
 			)
 		);
 
-
-		$within_result            = new WP_Query( $query );
-		$within_reserve_posts_cnt = $within_result->post_count;
-
-
+		$within_feature_posts = new WP_Query( $query );
 		?>
 		<p class="rpb_publishing_soon">
-			<?php echo sprintf( __( 'Publishing Soon (within %sh) <span>%s</span> post', 'reserve-post-board' ), $hour, $within_reserve_posts_cnt ); ?>
+			<?php echo sprintf( __( 'Publishing Soon (within %1$sh) <span>%2$s</span> post', 'reserve-post-board' ), $hour, $within_feature_posts->post_count ); ?>
 		</p>
-		<?php
-		if ( $list_cnt > 0 ) {
-			?>
-			<b>
-				<?php echo sprintf( __( 'List of reserved post (%s of %s)', 'reserve-post-board' ), $all_cnt, $list_cnt ); ?>
-				&nbsp;
-			</b>
-			<?php
-		} else {
-			?>
-			<b>
-				<?php echo __( 'No reserved posts found.', 'reserve-post-board' ); ?>
-				&nbsp;
-			</b>
-			<?php
-		}
-		if ( $list_cnt > 0 ) {
-			?>
-
+		<?php if ( ! $all_feature_posts->have_posts() ) : ?>
+			<b><?php echo __( 'No reserved posts found.', 'reserve-post-board' ); ?></b>
+		<?php else: ?>
+			<b><?php echo sprintf( __( 'List of reserved post (%1$s of %2$s)', 'reserve-post-board' ), $display_limit, $all_feature_posts->post_count ); ?></b>
 			<div id="rpb_future_posts">
 				<ul>
-					<?php
-					if ( $list_result->have_posts() ) {
-						while ( $list_result->have_posts() ) {
-							$list_result->the_post();
+					<?php for ( $i = 0; $i < $display_limit; $i ++ ) : ?>
+						<?php
+						$all_feature_posts->the_post();
 
-							$title     = get_the_title();
-							$ID        = get_the_ID();
-							$post_type = $list_result->post->post_type;
-							$link      = "<a href='" . admin_url() . "post.php?post=" . $ID . "&action=edit'>" . $title . "</a>";
-
-							$date_txt = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $list_result->post->post_date ) );
-
-							$today = ( date_i18n( 'Ymd', strtotime( $list_result->post->post_date ) ) == date_i18n( 'Ymd' ) ) ? ' today' : '';
-							?>
-
-							<li>
-								<span class="rpb_date<?php echo $today; ?>"><?php echo $date_txt; ?></span>
-								<span class="rpb_title"><?php echo $link; ?></span>
-								<span class="rpb_post_type">(<?php echo get_post_type_object( $post_type )->label; ?>)</span>
-							</li>
-							<?php
-
-						}
-					}
-					?>
+						$title     = get_the_title();
+						$ID        = get_the_ID();
+						$post_type = get_post_type();
+						$link      = "<a href='" . admin_url() . "post.php?post=" . $ID . "&action=edit'>" . $title . "</a>";
+						$date_txt  = get_the_date() . ' ' . get_the_time();
+						$today     = ( get_the_date() == date_i18n( get_option( 'date_format' ) ) ) ? ' today' : '';
+						?>
+						<li>
+							<span class="rpb_date<?php echo $today; ?>"><?php echo $date_txt; ?></span>
+							<span class="rpb_title"><?php echo $link; ?></span>
+							<span class="rpb_post_type">(<?php echo get_post_type_object( $post_type )->label; ?>)</span>
+						</li>
+					<?php endfor; ?>
 				</ul>
 			</div>
-			<?php
-			wp_reset_postdata();
-		}
-
-
+		<?php
+		endif;
+		wp_reset_postdata();
 	}//function reserve_post_board
 }
 
-new Reserve_Post_Board();
-
+$GLOBALS['reserve_post_board'] = new Reserve_Post_Board();
