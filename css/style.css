@@ -13,7 +13,6 @@
 	padding-left: 2em;
 }
 
-
 #reserve_post_board #rpb_future_posts ul {
 	display: table;
 	width: 100%;
@@ -38,13 +37,9 @@
 
 #reserve_post_board #rpb_future_posts ul li .rpb_date,
 #reserve_post_board #rpb_future_posts ul li .rpb_post_type {
-	word-break: none;
+	white-space: nowrap;
 }
 
-#reserve_post_board #rpb_future_posts ul li .rpb_title {
-	width: 40%;
-}
-
-#reserve_post_board #rpb_future_posts ul li .rpb_date.color_today {
+#reserve_post_board #rpb_future_posts ul li .rpb_date.today {
 	color: red;
 }

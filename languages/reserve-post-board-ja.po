@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://make.wordpress.org/polyglots/\n"
 "POT-Creation-Date: 2018-11-27 10:38+0900\n"
 "PO-Revision-Date: 2018-11-27 10:39+0900\n"
-"Last-Translator: \n"
+"Last-Translator: PM Yosuke\n"
 "Language-Team: akihiro kato\n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
@@ -24,13 +24,13 @@ msgstr "予約投稿情報"
 
 #: reserve-post-board.php:111
 #, php-format
-msgid "Publishing Soon (within %sh) <span>%s</span> post"
-msgstr "直近の公開 (%s時間以内) <span>%s 件</span>"
+msgid "Publishing Soon (within %1$sh) <span>%2$s</span> post"
+msgstr "直近の公開 (%1$s時間以内) <span>%2$s 件</span>"
 
 #: reserve-post-board.php:117
 #, php-format
-msgid "List of reserved post (%s of %s)"
-msgstr "公開予約された記事 (%s件中 %s件を表示)"
+msgid "List of reserved post (%1$s of %2$s)"
+msgstr "公開予約された記事 (%2$s件中 %1$s件を表示)"
 
 #: reserve-post-board.php:124
 msgid "No reserved posts found."
